@@ -1,26 +1,38 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 export async function POST(req: Request) {
   try {
     const { role, industry, mode, message } = await req.json();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const prompt = `
-    Vastaa aina suomeksi. Olet kokenut myynnin valmentaja.
-    Rooli: ${role}, Toimiala: ${industry}, Tila: ${mode}
-    Tilanne: ${message}
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `Olet asiantunteva myyntivalmentaja. Vastaa aina suomeksi. 
+          Käyttäjän rooli: ${role}. Toimiala: ${industry}. Tila: ${mode}.`
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      model: "llama-3.3-70b-versatile",
+    });
 
-    Jos tila on "sparraus": Analysoi tilanne ja anna 3 konkreettista vinkkiä.
-    Jos tila on "simulaatio": Toimi asiakkaana ja heitä realistinen vastaväite.
-    `;
+    const reply = chatCompletion.choices[0]?.message?.content || "Ei vastausta.";
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    
-    return new Response(JSON.stringify({ reply: response.text() }), { status: 200 });
+    return new Response(JSON.stringify({ reply }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Gemini-yhteysvirhe" }), { status: 500 });
+    console.error("Groq Error:", error);
+    return new Response(JSON.stringify({ error: "Yhteysvirhe tekoälyyn" }), { 
+      status: 500 
+    });
   }
 }
