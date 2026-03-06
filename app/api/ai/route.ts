@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { role, industry, message } = await req.json();
+    const { role, industry, history } = await req.json(); // Otetaan vastaan historia
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -12,19 +12,8 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [
-          { 
-            role: 'system', 
-            content: `Olet Tukipalvelu AI, vähittäiskaupan asiantuntija. 
-            Käyttäjän rooli: ${role}. Toimiala: ${industry}. 
-            
-            OHJEET:
-            1. Jos rooli on Esihenkilö: Auta raporteissa, myynnin johtamisessa, työvuoroissa ja rutiineissa.
-            2. Jos rooli on Työntekijä: Auta myynnissä, tuotetiedoissa, laskelmissa ja arjen tehtävissä.
-            3. Jos rooli on HR: Neuvo TES-asioissa, työtodistuspohjissa ja työaikalaissa.
-            
-            Vastaa selkeästi, ammattimaisesti ja suomeksi.` 
-          },
-          { role: 'user', content: message }
+          { role: 'system', content: `Olet Tukipalvelu AI, vähittäiskaupan asiantuntija. Käyttäjän rooli: ${role}.` },
+          ...history // TÄMÄ ON TÄRKEÄ: Se liittää koko aiemman keskustelun mukaan!
         ],
       }),
     });
