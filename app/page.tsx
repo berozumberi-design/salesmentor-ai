@@ -30,60 +30,60 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen relative flex flex-col items-center justify-center p-4 md:p-6 font-sans text-slate-900">
-      <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: "url('/tausta.jpg')" }} />
-      <div className="absolute inset-0 z-10 bg-slate-900/75 backdrop-blur-sm" />
+    <main className="min-h-screen bg-slate-900 text-white p-8 font-sans">
+      <div className="max-w-2xl mx-auto space-y-6">
+        <header className="border-b border-slate-700 pb-4">
+          <h1 className="text-2xl font-bold">SalesMentor AI</h1>
+          <p className="text-slate-400 text-sm">Ammattimainen myyntivalmentajasi</p>
+        </header>
 
-      <div className="relative z-20 w-full max-w-2xl bg-white/95 p-6 rounded-2xl shadow-2xl">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="bg-blue-600 p-2 rounded-lg">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-xs uppercase font-bold text-slate-500">Roolisi</label>
+            <select 
+              value={role} 
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              {roles.map(r => <option key={r}>{r}</option>)}
+            </select>
           </div>
-          <h1 className="text-xl font-black uppercase tracking-tighter">SalesMentor AI</h1>
+          <div className="space-y-2">
+            <label className="text-xs uppercase font-bold text-slate-500">Toimiala</label>
+            <select 
+              value={industry} 
+              onChange={(e) => setIndustry(e.target.value)}
+              className="w-full p-3 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+              {industries.map(i => <option key={i}>{i}</option>)}
+            </select>
+          </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[10px] font-bold text-blue-600 uppercase mb-1 ml-1">Roolisi</label>
-              <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full p-2 border rounded-xl text-sm font-semibold bg-white cursor-pointer">
-                {roles.map(r => <option key={r}>{r}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-blue-600 uppercase mb-1 ml-1">Toimiala</label>
-              <select value={industry} onChange={(e) => setIndustry(e.target.value)} className="w-full p-2 border rounded-xl text-sm font-semibold bg-white cursor-pointer">
-                {industries.map(i => <option key={i}>{i}</option>)}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-[10px] font-bold text-blue-600 uppercase mb-1 ml-1">Miten voin auttaa?</label>
-            <textarea 
-              value={message} 
-              onChange={(e) => setMessage(e.target.value)} 
-              placeholder="Kirjoita tähän tilanne..."
-              className="w-full p-3 border rounded-xl h-24 text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          <button 
-            onClick={handleSend} 
-            disabled={loading || !message}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50 text-sm"
-          >
-            {loading ? 'Analysoidaan...' : 'Kysy valmentajalta'}
-          </button>
-
-          {reply && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-500 animate-in fade-in duration-500">
-              <p className="text-sm leading-relaxed italic text-slate-700">
-                "{reply}"
-              </p>
-            </div>
-          )}
+        <div className="space-y-2">
+          <label className="text-xs uppercase font-bold text-slate-500">Miten voin auttaa?</label>
+          <textarea 
+            value={message} 
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Esim: Asiakas sanoo että hinta on liian kallis..."
+            className="w-full p-4 bg-slate-800 border border-slate-700 rounded-xl h-40 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+          />
         </div>
+
+        <button 
+          onClick={handleSend} 
+          disabled={loading || !message}
+          className="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold shadow-lg transition-all disabled:opacity-50"
+        >
+          {loading ? 'Valmentaja miettii...' : 'Hae vastaus'}
+        </button>
+
+        {reply && (
+          <div className="bg-slate-800 p-6 rounded-xl border border-blue-500/30 animate-in fade-in">
+            <h3 className="text-blue-400 text-xs uppercase font-black mb-3">Valmentajan neuvo:</h3>
+            <p className="text-slate-200 leading-relaxed italic">"{reply}"</p>
+          </div>
+        )}
       </div>
     </main>
   );
