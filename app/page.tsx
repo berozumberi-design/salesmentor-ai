@@ -22,7 +22,7 @@ export default function Home() {
   }, [chatHistory]);
 
   const handleSend = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || loading) return;
     setLoading(true);
     
     const newUserMessage = { role: 'user', content: message };
@@ -66,8 +66,9 @@ export default function Home() {
           className="flex-1 bg-white rounded-3xl shadow-inner border border-gray-200 overflow-y-auto p-6 space-y-6"
         >
           {chatHistory.length === 0 && (
-            <div className="h-full flex flex-col items-center justify-center text-gray-300 space-y-3 opacity-60">
-              <p className="text-sm font-bold uppercase tracking-widest text-center">Valitse rooli ja kysy jotain</p>
+            <div className="h-full flex flex-col items-center justify-center text-gray-300 space-y-3 opacity-60 text-center">
+              <p className="text-sm font-bold uppercase tracking-widest">Valitse rooli ja kysy jotain</p>
+              <p className="text-xs italic">Esim. "Tee työvuorolista" tai "Mitä TES sanoo palkasta?"</p>
             </div>
           )}
           
@@ -89,4 +90,47 @@ export default function Home() {
           ))}
           
           {loading && (
-            <div className="flex justify-start items
+            <div className="flex justify-start items-center gap-2 ml-2">
+              <div className="flex gap-1">
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce"></div>
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white p-5 rounded-3xl shadow-xl border border-gray-200 space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <select 
+              value={role} 
+              onChange={(e) => setRole(e.target.value)} 
+              className="text-xs font-bold uppercase p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none"
+            >
+              {roles.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+            <div className="text-xs font-bold uppercase p-3 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl">
+              {industry}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <input 
+              value={message} 
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Kirjoita kysymyksesi..."
+              className="flex-1 p-4 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-inner"
+            />
+            <button 
+              onClick={handleSend} 
+              disabled={loading || !message.trim()}
+              className="bg-blue-700 hover:bg-blue-800 text-white px-8 rounded-xl font-black text-sm transition-all disabled:opacity-50 shadow-md"
+            >
+              LÄHETÄ
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
